@@ -4,11 +4,16 @@
 
 from sklearn.ensemble import GradientBoostingClassifier
 from imblearn.under_sampling import RandomUnderSampler
+from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_validate
 from sklearn.model_selection import GridSearchCV
 from sklearn.datasets import make_classification
+from sklearn.metrics import cohen_kappa_score
 from sklearn.metrics import roc_auc_score
 from imblearn.over_sampling import SMOTE
+from sklearn.metrics import recall_score
+from sklearn.metrics import make_scorer
 from imblearn.pipeline import Pipeline
 from xgboost import XGBClassifier
 from datetime import datetime
@@ -34,7 +39,7 @@ def grid_info(grid, m):
 
 
 def customize_classifier(X, y, model_name, model_params='',
-                         imbalance=False):
+                         imbalance=False, val_score=False):
     """
     classifier estimator
 
@@ -43,8 +48,10 @@ def customize_classifier(X, y, model_name, model_params='',
     :param model_name: list, need train model method name
     :param model_params: dict, customize model params
     :param imbalance: boolean, imbalance adjust
+    :param val_score: boolean, return val score
     :return: best_est: object, best model,
              res:DataFrame, grid search detail info
+             val info :DataFrame, each val score
     """
 
     # model method
@@ -102,9 +109,23 @@ def customize_classifier(X, y, model_name, model_params='',
                             0.5, 0.8, 0.9, 1]},
                     'step4': {
                         'model__reg_alpha': [0, 1e-1, 1]}}
-                }
-
+                },
+        'lg': {"model": LogisticRegression(),
+               "params": {
+                   'step1': {'model__penalty': ['none',
+                                                'l2']}}
+               }
     }
+
+    # scoring dict
+    scoring = {'Accuracy': 'accuracy',
+               'sensitivity': 'recall',
+               'specificity': make_scorer(recall_score,
+                                          pos_label=0),
+               'Balanced_Accuracy': 'balanced_accuracy',
+               'AUC': 'roc_auc',
+               'Kappa': make_scorer(cohen_kappa_score),
+               'F1': 'f1'}
 
     # set params
     if model_params == '':
@@ -114,7 +135,7 @@ def customize_classifier(X, y, model_name, model_params='',
     # balance adjust
     if imbalance:
         model_pipe = [
-            ('over', SMOTE(sampling_strategy=0.1)),
+            ('over', SMOTE(sampling_strategy=0.2)),
             ('under', RandomUnderSampler(
                 sampling_strategy=0.5))]
     else:
@@ -162,8 +183,20 @@ def customize_classifier(X, y, model_name, model_params='',
     best_md_name = best_res.loc[
         best_res['time'].idxmin(), 'model']
 
-    # fit best model
+    # best model
     best_est = md_dict[best_md_name]
+
+    # val score
+    if val_score:
+        val_info = cross_validate(best_est, X, y,
+                                  scoring=scoring,
+                                  cv=5,
+                                  return_train_score=True)
+        val_info = pd.DataFrame(val_info)
+    else:
+        val_info = pd.DataFrame()
+
+    # fit best model
     best_est.fit(X, y)
 
     # add all
@@ -176,7 +209,7 @@ def customize_classifier(X, y, model_name, model_params='',
                        'rank_test_score': ['all'],
                        'model': [best_md_name]})])
 
-    return best_est, res
+    return best_est, res, val_info
 
 
 if __name__ == '__main__':
@@ -186,15 +219,18 @@ if __name__ == '__main__':
         n_features=2,
         n_redundant=0,
         n_clusters_per_class=1,
-        weights=[0.1],
+        weights=[0.9],
         flip_y=0,
         random_state=1)
 
     X = pd.DataFrame(X)
 
-    best_m, report = customize_classifier(
+    best_m, report, val_tb = customize_classifier(
         X=X,
         y=y,
-        model_name=['tree', 'rf', 'gbm', 'xgb', 'lgb'],
-        model_params=''
+        model_name=['tree', 'rf', 'gbm',
+                    'xgb', 'lgb', 'lg'],
+        model_params='',
+        imbalance=True,
+        val_score=True
     )

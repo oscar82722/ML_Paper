@@ -10,20 +10,24 @@ import src.estimator.classifier as c
 shap.initjs()
 
 
-def run(X, y, model, size):
+def run(X, y, model, size, train=True):
     """
     run shap
     :param X: DataFrame/array, x variable data
     :param y: DataFrame/1.d array, y variable data only 0,1
     :param model: list, need train model method name
     :param size: use to plot sample size
+    :param train: boolean, need training model
     :return: None
     """
 
-    best_md, result = c.customize_classifier(
-        X=X,
-        y=y,
-        model_name=model)
+    if train:
+        best_md, result = c.customize_classifier(
+            X=X,
+            y=y,
+            model_name=model)
+    else:
+        best_md = model
 
     # check size
     s = X.shape[0] if X.shape[0] > size else size
@@ -39,7 +43,7 @@ def run(X, y, model, size):
     shap.summary_plot(
         shap_values,
         shap_df,
-        feature_names=shap_df.columns)
+        feature_names=shap_df.columns, show=False)
 
 
 if __name__ == '__main__':

@@ -110,10 +110,9 @@ def customize_classifier(X, y, model_name, model_params='',
                     'step4': {
                         'model__reg_alpha': [0, 1e-1, 1]}}
                 },
-        'lg': {"model": LogisticRegression(),
+        'lg': {"model": LogisticRegression(solver='saga'),
                "params": {
-                   'step1': {'model__penalty': ['none',
-                                                'l2']}}
+                   'step1': {'model__penalty': ['l2']}}
                }
     }
 
@@ -135,7 +134,7 @@ def customize_classifier(X, y, model_name, model_params='',
     # balance adjust
     if imbalance:
         model_pipe = [
-            ('over', SMOTE(sampling_strategy=0.2)),
+            ('over', SMOTE(sampling_strategy=0.1)),
             ('under', RandomUnderSampler(
                 sampling_strategy=0.5))]
     else:

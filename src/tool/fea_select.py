@@ -12,7 +12,16 @@ import pandas as pd
 import numpy as np
 
 
-def fea_select(X, y, method):
+def fea_select(X, y, method, thr='1.25*mean'):
+    """
+    customize feature selection
+
+    :param X: pd.DataFrame, feature
+    :param y: pd.DataFrame, target
+    :param method: str, feature selection method name
+    :param thr: str, threshold method name
+    :return: list, select column
+    """
 
     select_method = {
         'tree': tree.DecisionTreeClassifier(),
@@ -30,7 +39,7 @@ def fea_select(X, y, method):
         # feature select
         selector = SelectFromModel(
             estimator=select_method[method],
-            threshold='1.25*mean')
+            threshold=thr)
         selector.fit(X.values, np.ravel(y.values))
         keep_col = X.columns
         keep_col = list(keep_col[selector.get_support()])

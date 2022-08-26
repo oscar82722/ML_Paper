@@ -22,7 +22,7 @@ def run(X, y, model, size, train=True):
     """
 
     if train:
-        best_md, result = c.customize_classifier(
+        best_md, result, val_info = c.customize_classifier(
             X=X,
             y=y,
             model_name=model)
@@ -30,7 +30,7 @@ def run(X, y, model, size, train=True):
         best_md = model
 
     # check size
-    s = X.shape[0] if X.shape[0] > size else size
+    s = X.shape[0] if X.shape[0] < size else size
     shap_df = X.sample(n=s, random_state=1)
 
     # shape
@@ -45,6 +45,8 @@ def run(X, y, model, size, train=True):
         shap_df,
         feature_names=shap_df.columns, show=False)
 
+    return best_md
+
 
 if __name__ == '__main__':
     # sample
@@ -53,11 +55,11 @@ if __name__ == '__main__':
         n_features=2,
         n_redundant=0,
         n_clusters_per_class=1,
-        weights=[0.1],
+        weights=[0.5],
         flip_y=0,
         random_state=1)
 
     X = pd.DataFrame(X)
-    run(X=X, y=y, model=['lgb'], size=1000)
+    run(X=X, y=y, model=['gbm'], size=1000)
 
 

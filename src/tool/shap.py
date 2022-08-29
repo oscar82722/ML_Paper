@@ -10,7 +10,7 @@ import src.estimator.classifier as c
 shap.initjs()
 
 
-def run(X, y, model, size, train=True):
+def run(X, y, model, size, train=False):
     """
     run shap
     :param X: DataFrame/array, x variable data

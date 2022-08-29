@@ -184,19 +184,16 @@ if __name__ == '__main__':
         # process [training, plot]
         "process": [1, 1],
         # data params
-        "train_data_folder": "E:/NPC/Train/",
+        "train_data_folder": "D:/測試資料/train_min/",
         "data_group": ["D105", "D135", "D165", "D195",
                        "D375"],
 
         # feature selection params
-        "feature_file": "C:/Users/admin/Desktop/ML_Paper/params/npc/fea_comb_file_2.csv",
+        "feature_file": "D:/測試資料/fea_comb_file_test1.csv",
         "fea_group": {
             "fea_comb1": ["all"],
             "fea_comb2": ["all"],
-            "fea_comb3": ["all"],
-            "fea_comb4": ["all"],
-            "fea_comb5": ["all"],
-            "fea_comb6": ["all"]
+            "fea_comb3": ["all"]
         },
 
         # model params
@@ -253,12 +250,13 @@ if __name__ == '__main__':
             "score": "Balanced_Accuracy",
             "imbalance": 1,
             "imbalance_process": {
-                'under': {'sampling_strategy': 1}},
+                "over": {"sampling_strategy": 0.2},
+                "under": {"sampling_strategy": 1}},
             "val_score": 1
         },
 
         # output params
-        "output_folder": "C:/Users/admin/Desktop/ML_Paper/result/NPC_20220811/",
+        "output_folder": "D:/測試資料/result/",
 
         # plot params
         "plot_file": "",

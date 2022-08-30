@@ -42,9 +42,12 @@ def run(params):
 
             for f_n, f_m in params['fea_group'].items():
                 print('    fea group: ', f_n)
-                fea_all = fea_file[
+
+                fea_type = fea_file[
                     fea_file['Test_name'] ==
-                    f_n]['Col'].to_list()
+                    f_n][['Col', 'col_type']]
+
+                fea_all = fea_type['Col'].to_list()
 
                 for m in f_m:
                     print('        fea method: ', m)
@@ -60,6 +63,8 @@ def run(params):
                         '/fea/' + d + '__' + f_n + \
                         '__' + m + '.csv'
                     fea_out = pd.DataFrame({'Col': fea_now})
+                    fea_out = fea_out.merge(fea_type,
+                                            on=['Col'])
                     fea_out.to_csv(fea_select_path,
                                    index=False)
 
@@ -90,7 +95,7 @@ def run(params):
                         report[
                             ['data_group', 'fea_group',
                              'fea_method', 'model']] = \
-                            d,  f_n, m, md
+                            d, f_n, m, md
 
                         # save val
                         val_tb.index = \
@@ -100,7 +105,7 @@ def run(params):
                         val_tb[
                             ['data_group', 'fea_group',
                              'fea_method', 'model']] = \
-                            d,  f_n, m, md
+                            d, f_n, m, md
 
                         # update
                         df_report = pd.concat([
@@ -133,13 +138,39 @@ def run(params):
         df_ev = df_m.groupby(
             ['data_group', 'fea_group',
              'fea_method', 'model',
-             'train_test', 's'])['value'].mean().\
+             'train_test', 's'])['value'].mean(). \
             reset_index()
 
         df_ev.to_csv(params['output_folder'] +
                      '/evaluation.csv', index=False)
 
+        # step 6. select best
+        s_tb = df_ev[(df_ev['train_test'] == 'test') &
+                     (df_ev['s'] == params['model_params'][
+                         'score'])]
+        best_tb = s_tb[s_tb['value'] ==
+                       s_tb['value'].max()].reset_index()
+
+        best_tb['best_fea'] = \
+            best_tb[['data_group',
+                     'fea_group',
+                     'fea_method']].agg('__'.join, axis=1)
+
+        best_params = {
+            "data": params['train_data_folder'] + '/' +
+                    [x for x in file_v if
+                     best_tb.loc[0, 'data_group'] in x][0],
+
+            "fea": params['output_folder'] + '/fea/' +
+                   best_tb.loc[0, 'best_fea'] + '.csv',
+
+            "model": params['output_folder'] + '/model/' +
+                     best_tb.loc[0, 'best_fea'] + '__' +
+                     best_tb.loc[0, 'model'] + '.sav'
+        }
+
     if params['process'][1]:
+        print('HeatMap Begin')
         # step6. plot heatmap
         if params['plot_file'] != '':
             df_ev = pd.read_csv(params['plot_file'])
@@ -170,13 +201,15 @@ def run(params):
                     title="Feature Selection(" + d + ')',
                     r=[])
 
-                plt.show()
+                # plt.show()
                 plt.savefig(
                     params['output_folder'] +
                     '/plot/fea_select__' +
                     d + '__' + t + '.png')
 
-                print('data_group: ', d, '_', t, 'done')
+                print('    data_group: ', d, '_', t, 'done')
+
+    return best_params
 
 
 if __name__ == '__main__':
@@ -184,21 +217,19 @@ if __name__ == '__main__':
         # process [training, plot]
         "process": [1, 1],
         # data params
-        "train_data_folder": "D:/測試資料/train_min/",
-        "data_group": ["D105", "D135", "D165", "D195",
-                       "D375"],
+        "train_data_folder": "D:/test_data/train_min/",
+        "data_group": ["D105"],
 
         # feature selection params
-        "feature_file": "D:/測試資料/fea_comb_file_test1.csv",
+        "feature_file": "D:/test_data/fea_comb_file_test1.csv",
         "fea_group": {
             "fea_comb1": ["all"],
-            "fea_comb2": ["all"],
-            "fea_comb3": ["all"]
+            "fea_comb2": ["all"]
         },
 
         # model params
         "target": "NPC_D",
-        "model": ["lg", "tree", "rf", "xgb", "lgb"],
+        "model": ["tree", "rf"],
         "model_params": {
             "model_params": {
                 "tree": {
@@ -256,7 +287,7 @@ if __name__ == '__main__':
         },
 
         # output params
-        "output_folder": "D:/測試資料/result/",
+        "output_folder": "D:/test_data/result/",
 
         # plot params
         "plot_file": "",
@@ -264,4 +295,3 @@ if __name__ == '__main__':
     }
 
     run(params=train_param)
-

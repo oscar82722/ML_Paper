@@ -4,10 +4,8 @@
 
 from sklearn.datasets import make_classification
 import pandas as pd
-import shap
 
 import src.estimator.classifier as c
-shap.initjs()
 
 
 def run(X, y, model, size, train=False):
@@ -20,6 +18,7 @@ def run(X, y, model, size, train=False):
     :param train: boolean, need training model
     :return: None
     """
+    import shap
 
     if train:
         best_md, result, val_info = c.customize_classifier(
@@ -60,6 +59,7 @@ if __name__ == '__main__':
         random_state=1)
 
     X = pd.DataFrame(X)
-    run(X=X, y=y, model=['gbm'], size=1000)
+    run(X=X, y=y, model=['gbm'],
+        size=1000, train=True)
 
 

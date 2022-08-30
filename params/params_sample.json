@@ -1,0 +1,89 @@
+{
+	"train_params": {
+		"process": [1, 1],
+        "train_data_folder": "D:/test_data/train_min/",
+        "data_group": ["D105"],
+
+        "feature_file": "D:/test_data/fea_comb_file_test1.csv",
+        "fea_group": {
+            "fea_comb1": ["all"],
+            "fea_comb2": ["all"]
+        },
+
+        "target": "NPC_D",
+        "model": ["tree", "rf"],
+        "model_params": {
+            "model_params": {
+                "tree": {
+                    "step1": {"model__max_depth": [3, 5]}
+                },
+                "rf": {
+                    "step1": {"model__max_depth": [3, 5]}
+                },
+                "gbm": {
+                    "step1": {
+                        "model__n_estimators": [10, 30,
+                                                50]},
+                    "step2": {"model__max_depth": [3, 5]}
+                },
+                "xgb": {
+                    "step1": {"model__max_depth": [3, 5],
+                              "model__min_child_weight": [
+                                  1e-1, 1, 1e1]},
+                    "step2": {"model__gamma": [0, 0.2]},
+                    "step3": {
+                        "model__subsample": [0.8, 0.9]},
+                    "step4": {
+                        "model__reg_alpha": [0, 1e-1, 1,
+                                             2]},
+                    "step5": {
+                        "model__learning_rate": [0.1, 1]}
+                },
+                "lgb": {
+                    "step1": {
+                        "model__num_leaves": [5, 10, 20]},
+                    "step2": {
+                        "model__min_child_weight": [1e-1, 1,
+                                                    1e1]},
+                    "step3": {
+                        "model__subsample": [0.5, 0.8, 0.9,
+                                             1],
+                        "model__colsample_bytree": [0.5,
+                                                    0.8,
+                                                    0.9,
+                                                    1]},
+                    "step4": {
+                        "model__reg_alpha": [0, 1e-1, 1]}
+                },
+                "lg": {
+                    "step1": {"model__penalty": ["l2"]}
+                }
+            },
+            "search_method": "grid",
+            "score": "Balanced_Accuracy",
+            "imbalance": 1,
+            "imbalance_process": {
+                "over": {"sampling_strategy": 0.2},
+                "under": {"sampling_strategy": 1}},
+            "val_score": 1
+        },
+
+        "output_folder": "D:/test_data/result/",
+
+        "plot_file": "",
+        "fea_plot_score": "AUC"
+    },
+	
+	"explain_params": {
+        "data": "D:/test_data/train_min/PRED_2M_DATA_D105.csv",
+        "fea": "D:/test_data/result/fea/D105__fea_comb1__all.csv",
+        "target": "NPC_D",
+        "model": "D:/test_data/result/model/D105__fea_comb1__all__rf.sav",
+        "output": {
+            "SHAP": 1,
+            "Importance_plot": 1,
+            "tableone": 1
+        },
+        "output_folder": "D:/test_data/result/"
+    }
+}

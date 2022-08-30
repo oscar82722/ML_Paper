@@ -79,7 +79,8 @@ if __name__ == '__main__':
     df_test.columns = vegetables
     df_test.index = farmers
 
-    plot(df=df_test,
-         value_name='value',
-         title='Test HeatMap',
-         r=[])
+    for i in range(0, 3):
+        plot(df=df_test,
+             value_name='value',
+             title='Test HeatMap',
+             r=[])

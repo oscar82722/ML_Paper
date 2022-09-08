@@ -33,7 +33,6 @@ def run(params):
 
     # step 4.1 run shap
     if params['output']['SHAP']:
-        fig, ax = plt.subplots(figsize=(12, 8))
         sp.run(X=df[x_variable],
                y=df[params['target']],
                model=md,
@@ -75,16 +74,16 @@ def run(params):
 
 if __name__ == '__main__':
     explain_params = {
-        "data": "D:/測試資料/train_min/PRED_2M_DATA_D105.csv",
-        "fea": 'D:/測試資料/result/fea/D105__fea_comb1__all.csv',
+        "data": "D:/test_data/train_min/PRED_2M_DATA_D105.csv",
+        "fea": 'D:/test_data/result/fea/D105__fea_comb1__all.csv',
         "target": "NPC_D",
-        "model": "D:/測試資料/result/model/D105__fea_comb1__all__lgb.sav",
+        "model": "D:/test_data/result/model/D105__fea_comb1__all__rf.sav",
         "output": {
             "SHAP": 1,
             "Importance_plot": 1,
             "tableone": 1
         },
-        "output_folder": "D:/測試資料/result/plot/",
+        "output_folder": "D:/test_data/plt_test/",
     }
     run(explain_params)
 

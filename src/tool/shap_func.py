@@ -43,20 +43,24 @@ def run(X, y, model, size, train=False, out_folder=''):
         shap_v = shap_v[0].transpose()
         exp_res.values = shap_v
 
+    # plot bar plot
+    plt.subplots(figsize=(12, 12))
+    shap.plots.bar(exp_res, max_display=100, show=False)
+    plt.gcf().axes[-1].set_aspect('auto')
+    plt.tight_layout()
+    if out_folder != '':
+        plt.savefig(out_folder + '/shap_bar.png')
+
     # plot
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(12, 12))
     shap.summary_plot(
         shap_v,
         shap_df,
         feature_names=shap_df.columns, show=False)
+    plt.gcf().axes[-1].set_aspect('auto')
+    plt.tight_layout()
     if out_folder != '':
         plt.savefig(out_folder + '/shap.png')
-
-    # plot bar plot
-    fig, ax = plt.subplots(figsize=(12, 8))
-    shap.plots.bar(exp_res)
-    if out_folder != '':
-        plt.savefig(out_folder + '/shap_bar.png')
 
     return best_md
 

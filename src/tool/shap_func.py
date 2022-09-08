@@ -3,12 +3,13 @@
 # ver1.0 create @20220809
 
 from sklearn.datasets import make_classification
+import matplotlib.pyplot as plt
 import pandas as pd
 
 import src.estimator.classifier as c
 
 
-def run(X, y, model, size, train=False):
+def run(X, y, model, size, train=False, out_folder=''):
     """
     run shap
     :param X: DataFrame/array, x variable data
@@ -16,6 +17,7 @@ def run(X, y, model, size, train=False):
     :param model: list, need train model method name
     :param size: use to plot sample size
     :param train: boolean, need training model
+    :param out_folder: str, save plot folder
     :return: None
     """
     import shap
@@ -34,15 +36,27 @@ def run(X, y, model, size, train=False):
 
     # shape
     explainer = shap.TreeExplainer(best_md['model'])
-    shap_values = explainer.shap_values(shap_df)
-    shap_values = shap_values[1] if len(shap_values) == 2 \
-        else shap_values
+    exp_res = explainer(shap_df)
+    shap_v = exp_res.values
+    if len(shap_v.shape) == 3:
+        shap_v = shap_v.transpose()
+        shap_v = shap_v[0].transpose()
+        exp_res.values = shap_v
 
     # plot
+    fig, ax = plt.subplots(figsize=(12, 8))
     shap.summary_plot(
-        shap_values,
+        shap_v,
         shap_df,
         feature_names=shap_df.columns, show=False)
+    if out_folder != '':
+        plt.savefig(out_folder + '/shap.png')
+
+    # plot bar plot
+    fig, ax = plt.subplots(figsize=(12, 8))
+    shap.plots.bar(exp_res)
+    if out_folder != '':
+        plt.savefig(out_folder + '/shap_bar.png')
 
     return best_md
 
@@ -50,7 +64,7 @@ def run(X, y, model, size, train=False):
 if __name__ == '__main__':
     # sample
     X, y = make_classification(
-        n_samples=10000,
+        n_samples=5000,
         n_features=2,
         n_redundant=0,
         n_clusters_per_class=1,
@@ -59,7 +73,9 @@ if __name__ == '__main__':
         random_state=1)
 
     X = pd.DataFrame(X)
-    run(X=X, y=y, model=['gbm'],
-        size=1000, train=True)
+    X.columns = ['a', 'b']
+    for m in ['tree', 'xgb', 'rf', 'lgb']:
+        run(X=X, y=y, model=[m],
+            size=1000, train=True)
 
 

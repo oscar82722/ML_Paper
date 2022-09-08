@@ -38,9 +38,8 @@ def run(params):
                y=df[params['target']],
                model=md,
                train=t,
-               size=1000)
-        plt.savefig(params['output_folder'] +
-                    '/explain/shap.png')
+               size=1000,
+               out_folder=params['output_folder'] + '/explain/')
         print('    ' + 'SHAP Done')
 
     # step 4.2 run importance

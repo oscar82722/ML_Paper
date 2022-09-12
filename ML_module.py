@@ -5,6 +5,7 @@
 import json
 
 import feature_explain as fe
+import predict as ped
 import train as t
 
 
@@ -30,6 +31,14 @@ def run(ctrl, p):
         fe.run(ex_params)
         print('Feature Explain Done')
 
+    # predict
+    if int(ctrl[2]):
+        # update params
+        pred_params = param_file['predict_params']
+        print(pred_params)
+        ped.run(pred_params)
+        print('Predict Done')
+
 
 def main():
     from argparse import ArgumentParser
@@ -43,7 +52,7 @@ def main():
     parser.add_argument(
         '-r', '--run_project',
         dest='RUNMODUEL',
-        help='string code, ex:11')
+        help='string code, ex:111')
 
     args = parser.parse_args()
 

@@ -24,6 +24,36 @@ from sklearn import tree
 import lightgbm as lgb
 import pandas as pd
 
+# scoring dict
+scoring_dict = {
+    'Accuracy': get_scorer('accuracy'),
+    'sensitivity': get_scorer('recall'),
+    'specificity': make_scorer(recall_score, pos_label=0),
+    'Balanced_Accuracy': get_scorer('balanced_accuracy'),
+    'AUC': get_scorer('roc_auc'),
+    'Kappa': make_scorer(cohen_kappa_score),
+    'F1': get_scorer('f1')
+}
+
+
+def calculate_score(y_t, y_p):
+    sc_tb = pd.DataFrame()
+    for sc_name, sc in scoring_dict.items():
+        if sc_name == 'specificity':
+            p = sc._kwargs
+            p['y_true'] =y_t
+            p['y_pred'] = y_p
+            res = sc._score_func(**p)
+        else:
+            res = sc._score_func(y_t, y_p)
+
+        df_temp = pd.DataFrame({'score_name': [sc_name],
+                                'score': [res]})
+        sc_tb = pd.concat([sc_tb, df_temp])
+        print(sc_name)
+
+    return sc_tb
+
 
 def grid_info(grid, m):
     """
@@ -156,16 +186,6 @@ def customize_classifier(X, y, model_name, model_params='',
         "over": SMOTE(sampling_strategy=0.1),
         "under":  RandomUnderSampler(sampling_strategy=1)
     }
-
-    # scoring dict
-    scoring_dict = {
-        'Accuracy': get_scorer('accuracy'),
-        'sensitivity': get_scorer('recall'),
-        'specificity': make_scorer(recall_score, pos_label=0),
-        'Balanced_Accuracy': get_scorer('balanced_accuracy'),
-        'AUC': get_scorer('roc_auc'),
-        'Kappa': make_scorer(cohen_kappa_score),
-        'F1': get_scorer('f1')}
 
     # set search params
     if model_params == '' and search_method == 'grid':

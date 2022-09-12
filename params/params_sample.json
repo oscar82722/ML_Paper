@@ -85,5 +85,15 @@
             "tableone": 1
         },
         "output_folder": "D:/test_data/result/"
-    }
+    },
+	
+	"predict_params":{
+		"data": "D:/test_data/test.csv",
+        "fea": "D:/test_data/result/fea/D105__fea_comb1__all.csv",
+        "model": "D:/test_data/result/model/D105__fea_comb1__all__rf.sav",
+        "target": "NPC_D",
+        "prob": [0, 0.5, 0.6, 1],
+        "time_col": ["INDEX_TIME", "END_TIME"],
+        "output_folder": "D:/test_data/result/"
+	}
 }

@@ -74,16 +74,16 @@ def run(params):
 
 if __name__ == '__main__':
     explain_params = {
-        "data": "D:/test_data/train_min/PRED_2M_DATA_D105.csv",
-        "fea": 'D:/test_data/result/fea/D105__fea_comb1__all.csv',
-        "target": "NPC_D",
-        "model": "D:/test_data/result/model/D105__fea_comb1__all__rf.sav",
+        "data": "D:/test/TRAIN_DATA_1214_all.csv",
+        "fea": 'D:/test/all__fea_comb1__lgb.csv',
+        "target": "CMS_D",
+        "model": "D:/test/all__fea_comb1__lgb__xgb.sav",
         "output": {
             "SHAP": 1,
             "Importance_plot": 1,
             "tableone": 1
         },
-        "output_folder": "D:/test_data/plt_test/",
+        "output_folder": "D:/test/plt_test/",
     }
     run(explain_params)
 

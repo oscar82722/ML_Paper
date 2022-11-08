@@ -28,7 +28,7 @@ def run(params):
 
     # step3 read model
     md = joblib.load(params['model'])
-    print('    Read Feature Done')
+    print('    Read Model Done')
 
     # step4 predict
     y_hat = md.predict_proba(df[x_variable])
@@ -66,13 +66,13 @@ def run(params):
 
 if __name__ == '__main__':
     pred_params = {
-        "data": 'D:/test_data/test.csv',
-        "fea": "D:/test_data/result/fea/D105__fea_comb1__all.csv",
-        "model": "D:/test_data/result/model/D105__fea_comb1__all__rf.sav",
-        "target": "NPC_D",
+        "data": 'F:/analysis/Ovarian cancer/data/data_clean.csv',
+        "fea": "F:/analysis/Ovarian cancer/result/fea/clean__comb_1__tree.csv",
+        "model": "F:/analysis/Ovarian cancer/result/model/clean__comb_1__tree__tree.sav",
+        "target": "d",
         "prob": [0, 0.5, 0.6, 1],
         "time_col": ['INDEX_TIME', 'END_TIME'],
-        "output_folder": "D:/test_data/result/"
+        "output_folder": "F:/analysis/Ovarian cancer/result"
     }
 
     run(params=pred_params)

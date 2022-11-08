@@ -40,7 +40,7 @@ def run(X, y, model, size, train=False, out_folder=''):
     shap_v = exp_res.values
     if len(shap_v.shape) == 3:
         shap_v = shap_v.transpose()
-        shap_v = shap_v[0].transpose()
+        shap_v = shap_v[1].transpose()
         exp_res.values = shap_v
 
     # plot bar plot
@@ -67,6 +67,7 @@ def run(X, y, model, size, train=False, out_folder=''):
 
 if __name__ == '__main__':
     # sample
+    import numpy as np
     X, y = make_classification(
         n_samples=5000,
         n_features=2,
@@ -78,6 +79,7 @@ if __name__ == '__main__':
 
     X = pd.DataFrame(X)
     X.columns = ['a', 'b']
+    y = np.where(y == 1, True, False)
     for m in ['tree', 'xgb', 'rf', 'lgb']:
         run(X=X, y=y, model=[m],
             size=1000, train=True)

@@ -37,7 +37,7 @@ def run(params):
                y=df[params['target']],
                model=md,
                train=t,
-               size=1000,
+               size=1000000,
                out_folder=params['output_folder'] + '/explain/')
         print('    ' + 'SHAP Done')
 
@@ -73,11 +73,12 @@ def run(params):
 
 
 if __name__ == '__main__':
+    from sklearn import tree
     explain_params = {
-        "data": "D:/test/TRAIN_DATA_1214_all.csv",
-        "fea": 'D:/test/all__fea_comb1__lgb.csv',
-        "target": "CMS_D",
-        "model": "D:/test/all__fea_comb1__lgb__xgb.sav",
+        "data": "F:/analysis/Ovarian cancer/data/data_clean.csv",
+        "fea": 'F:/analysis/Ovarian cancer/result/fea/clean__comb_1__lgb.csv',
+        "target": "d",
+        "model": "F:/analysis/Ovarian cancer/result/model/clean__comb_1__lgb__xgb.sav",
         "output": {
             "SHAP": 1,
             "Importance_plot": 1,

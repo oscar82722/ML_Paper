@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # ver1.0 create @20220809
-
+import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.linear_model import LogisticRegression
@@ -199,6 +199,9 @@ def customize_classifier(X, y, model_name, model_params='',
                       for i, j in imbalance_process.items()]
     else:
         model_pipe = []
+
+    # change to boolean
+    y = np.where(y == 1, True, False)
 
     # run search
     md_dict, cv_result = {}, pd.DataFrame()

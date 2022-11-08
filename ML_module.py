@@ -61,8 +61,11 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    run(ctrl='110',
+        p='F:/analysis/Ovarian cancer/ml model/params.json')
+
     '''
+    main()
     run(ctrl='01',
         p='C:/Users/wang/Desktop/'
           'ML_Paper/params/params_sample.json')

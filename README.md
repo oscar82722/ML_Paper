@@ -1,4 +1,6 @@
 # ML_Paper
+Doc : https://docs.google.com/document/d/19OEfdsiukRF4xoH7Kgi1ulStttdHFCJtb9PHlIlMoSo/edit#heading=h.8qd2gqjsurxm
+
 |Date|des|
 |:-:|:-|
 |20220809|<ul><li>add model v1.0 and shap plot</li></ul>|
